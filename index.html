@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elibraria</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+<body>
+     <div id="header"></div>
+     <div id="books" class="container my-4 d-flex justify-content-between flex-wrap"></div>
+
+     <div id="pagination" class="container d-flex justify-content-center mb-5">
+        <a href="#" class="btn" action="prev">Prev</a>
+        &nbsp; | &nbsp;
+        <a href="#" class="btn" action="next">Next</a>
+        <input type="hidden" id="page" value="1" />
+        <input type="hidden" id="last_page" />
+     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+    <script type="module">
+
+         import {Header} from './components/Header.js';
+         import {Book} from './components/Book.js';
+         import {Pagination} from './components/Pagination.js';
+         import {getBooks}  from './modules/Books.js';
+
+         document.getElementById('header').innerHTML = Header();
+          document.getElementById('search').addEventListener('keyup', (e) =>{
+            switch(e.keyCode) {
+                case 13:
+                getBooks('https://gutendex.com/books/',{'search' : e.target.value}).then(
+               response => {
+                document.getElementById('last_page').value = Math.ceil(response.count / 30)
+                let books = '';
+                response.results.map(book => {
+                    if(book.title) {
+                        books += Book(book)
+                    }
+                });
+                 document.getElementById('books').innerHTML = books;
+             })
+              
+         .catch(e => console.log(e));
+                break;
+            }
+            document.getElementById('pagination').classlist.add('d-none');
+          })
+          document.querySelectorAll('.btn').forEach(button => button.addEventListener('click', (e) => {
+            e.preventDefault()
+            const action = e.target.getAttribute('action')
+            let page = document.getElementById('page')
+            const last_page = document.getElementById('last_page').value
+            let active_page = 1;
+
+            switch(action) {
+                case 'prev':
+                    if(parseInt(page.value) > 2){
+                        active_page = parseInt(page.value) - 1
+                        page.setAttribute('value', parseInt(psge.value) -1)
+                        
+                    }
+
+                    break;
+                case 'next':
+                 if(parseInt(page.value) < last_page){
+                        active_page = parseInt(page.value) + 1
+                        page.setAttribute('value', parseInt(page.value) +1)
+                      }  
+
+                    break;
+                   
+             }
+            getBooks('https://gutendex.com/books/',{'page' : active_page}).then(
+               response => {
+                document.getElementById('last_page').value = Math.ceil(response.count / 30)
+                let books = '';
+                response.results.map(book => {
+                    if(book.title) {
+                        books += Book(book)
+                    }
+                });
+                 document.getElementById('books').innerHTML = books;
+             })
+              
+         .catch(e => console.log(e));
+
+        }))
+
+         getBooks('https://gutendex.com/books/').then(
+            response => {
+                document.getElementById('last_page').value = Math.ceil(response.count / 30)
+                let books = '';
+                response.results.map(book => {
+                    if(book.title) {
+                        books += Book(book)
+                    }
+                });
+                 document.getElementById('books').innerHTML = books;
+             })
+              
+         .catch(e => console.log(e));
+         
+        
+
+</script>
+    
+</body>
+</html>

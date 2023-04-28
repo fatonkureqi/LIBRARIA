@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>elibraria</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
+<body>
+     <div id="header"></div>
+
+     <div id="book" class="container my-4"></div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+    <script type="module">
+
+         import {Header} from './components/Header.js';
+         import {ViewBook} from './components/ViewBook.js';
+         import {getBooks}  from './modules/Books.js';
+       
+
+         document.getElementById('header').innerHTML = Header();
+
+          // get id from query string
+          const id = window.location.href.split('=')[1]
+
+          if(id > 0){
+               getBooks('https://gutendex.com/books/',{'ids': id}).then(
+                response => {
+                  const book = response.results[0];
+                  document.getElementById('book').innerHTML =ViewBook(book);
+              }
+               
+            ).catch(e => console.log(e));
+ 
+         }
+           // add to cart
+         const add_to_cart_btn = document.getElementById('add-to-cart');
+
+         if(add_to_cart_btn) {
+           add_to_cart_btn.addEventListener('click',(e) =>{
+             alert('Add to cart button was clicked')
+           })
+         }
+
+         // add to fav.
+         const add_to_fav_btn = document.getElementById('add-to-fav');
+
+         if(add_to_fav_btn) {
+           add_to_fav_btn.addEventListener('click',(e) =>{
+             alert('Add to fav. button was clicked')
+           })
+         }
+        
+        
+</script>
+    
+</body>
+</html>
+    
